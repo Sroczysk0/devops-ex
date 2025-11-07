@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <title>Prosty Kalkulator</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body{font-family:system-ui,Arial,sans-serif;max-width:520px;margin:40px auto;padding:20px}
+    .card{border:1px solid #ddd;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+    label{display:block;margin:.5rem 0 .25rem}
+    input,select,button{width:100%;padding:.6rem;border:1px solid #ccc;border-radius:10px}
+    button{cursor:pointer;margin-top:12px}
+    .result{margin-top:14px;font-weight:700}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>kalkulator</h1>
+
+    <label for="a">Liczba A</label>
+    <input id="a" type="number" step="any" placeholder="np. 7.5">
+
+    <label for="b">Liczba B</label>
+    <input id="b" type="number" step="any" placeholder="np. 2">
+
+    <label for="op">Działanie</label>
+    <select id="op">
+      <option value="add">Dodawanie</option>
+      <option value="subtract">Odejmowanie</option>
+      <option value="multiply">Mnożenie</option>
+      <option value="divide">Dzielenie</option>
+    </select>
+
+    <button id="btn">Oblicz</button>
+    <div class="result" id="out"></div>
+    <p style="margin-top:10px;color:#666">Test: <a href="/hello">/hello</a></p>
+  </div>
+
+  <script>
+    const btn = document.getElementById('btn');
+    btn.addEventListener('click', async () => {
+      const a = document.getElementById('a').value;
+      const b = document.getElementById('b').value;
+      const op = document.getElementById('op').value;
+      const out = document.getElementById('out');
+
+      if (a === "" || b === "") { out.textContent = "Podaj obie liczby."; return; }
+
+      try {
+        const res = await fetch(`/${op}?a=${encodeURIComponent(a)}&b=${encodeURIComponent(b)}`);
+        const txt = await res.text();
+        out.textContent = `Wynik: ${txt}`;
+      } catch(e) {
+        out.textContent = "Błąd obliczeń.";
+      }
+    });
+  </script>
+</body>
+</html>
