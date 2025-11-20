@@ -1,10 +1,11 @@
+rootProject.name = 'devops-ex'
+
 pluginManagement {
   repositories {
     gradlePluginPortal()
     mavenCentral()
+    // dodatkowe repo (opcjonalnie, ale pomocne)
     maven { url 'https://repo.spring.io/milestone' }
     maven { url 'https://repo.spring.io/snapshot' }
   }
 }
-
-rootProject.name = 'devops-ex'

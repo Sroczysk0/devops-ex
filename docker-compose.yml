@@ -1,49 +1,45 @@
-version: '3.8'
+version: "3.8"
 
 services:
+  db:
+    image: mysql:8.0
+    container_name: demo_mysql
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - demo-network
+    ports:
+      - "3306:3306"
+
   app:
     build:
       context: .
       dockerfile: Dockerfile
-    image: devops-ex-app:local
+    container_name: demo_app
     depends_on:
       - db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/devopsdb
-      - SPRING_DATASOURCE_USERNAME=${DB_USER}
-      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/${MYSQL_DATABASE}?allowPublicKeyRetrieval=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
     ports:
       - "8080:8080"
     networks:
-      - devops_net
-
-  db:
-    image: postgres:15
+      - demo-network
     restart: unless-stopped
-    environment:
-      - POSTGRES_DB=devopsdb
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-    volumes:
-      - db_data:/var/lib/postgresql/data
-    networks:
-      - devops_net
-
-  pgadmin:
-    image: dpage/pgadmin4
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
-      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
-    ports:
-      - "8081:80"
-    depends_on:
-      - db
-    networks:
-      - devops_net
 
 volumes:
   db_data:
 
 networks:
-  devops_net:
+  demo-network:
     driver: bridge
+
